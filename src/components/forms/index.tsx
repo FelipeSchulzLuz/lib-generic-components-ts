@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { useForm, Controller } from "react-hook-form";
 import ReactDatePicker from "react-datepicker";
@@ -23,10 +23,15 @@ export default function Form() {
     const { handleSubmit, reset, setValue, control } = useForm({ defaultValues });
     const [data, setData] = useState(null);
 
+    useEffect(() => {
+        console.log(data);
+    }, [data]);
+
+
     const createSection = () => {}
 
     return (
-        <form onSubmit={handleSubmit((data: any) => setData(data))} className="form">
+        <form className="form">
             <div className="container">
                 <section>
                     <label>React Select</label>
@@ -92,6 +97,12 @@ export default function Form() {
                     />
                 </section>
             </div>
+            <button
+                className="button buttonBlack"
+                type="button"
+                role="submit"
+                onClick={handleSubmit((data: any) => setData(data))}
+            >TESTE</button>
         </form>
     );
 }

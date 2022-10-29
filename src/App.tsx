@@ -7,6 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 const Wrapper = styled.div`
     margin: 0;
     padding: 0;
+    min-height: 100vh;
   `;
 
 function App() {
