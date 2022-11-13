@@ -1,108 +1,183 @@
-import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
-import { useForm, Controller } from "react-hook-form";
-import ReactDatePicker from "react-datepicker";
-import ReactSelect from "react-select";
-import "./styles.css";
-import {
-    createBrowserRouter,
-    RouterProvider,
-} from "react-router-dom";
-
-
-const defaultValues = {
-    Native: "",
-    TextField: "",
-    Select: "",
-    ReactSelect: { value: "vanilla", label: "Vanilla" },
-    ReactDatepicker: new Date(),
-    MUIPicker: new Date("2020-08-01T00:00:00"),
-};
+import { Button, CircularProgress } from "@mui/material";
+import { ChangeEvent, FormEventHandler, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { LoadingIndicator } from "react-select/dist/declarations/src/components/indicators";
+import { EnumRenderFormInputs } from "./inputs/enumRender";
+import { IInputProps, ISelectProps } from "./inputs/types";
+import "./styles.scss";
 
 export default function Form() {
-    const { handleSubmit, reset, setValue, control } = useForm({ defaultValues });
-    const [data, setData] = useState(null);
+    const { handleSubmit, register, formState: { errors }, getValues, clearErrors } = useForm({ mode: "onSubmit" });
+    const { age: errorAge, name: errorName, } = errors
+    const [data, setData] = useState();
+    const [name, setName] = useState<string>("");
+    const [age, setAge] = useState<number>(0);
+    const [selectedCity, setSelectedCity] = useState<any[]>([]);
+    const [citiesList, setCitiesList] = useState<any[]>([]);
 
-    useEffect(() => {
-        console.log(data);
-    }, [data]);
+    const fakeLoadOptions = () => {
+        return new Promise((resolve) => {
+            console.log("fakeLoadOptions");
+            setTimeout(() => {
+                resolve([
+                    { value: "1", label: "Barra do Ribeiro" },
+                    { value: "2", label: "Porto Alegre" },
+                    { value: "3", label: "Guaíba" },
+                    { value: "4", label: "Tapes" },
+                    { value: "5", label: "Mariana Pimentel" },
+                    { value: "6", label: "Barão do Triunfo" },
+                    { value: "7", label: "Sertão Santana" },
+                ])
+            }, 3000)
+        })
+    }
 
+    function validateAge(age: any) {
+        if (age > 0) return age
+        if (Number(age) > 0) return Number(age)
+        return 0
+    }
 
-    const createSection = () => {}
+    function verifyForErrors(name: string) {
+        return errors[name] && errors[name]?.message;
+    }
+
+    const onSubmit = (event: any) => {
+        const formValues = getValues()
+        console.log({ formValues });
+        console.log("submit", formValues);
+        // setData(formValues)
+    }
+
+    async function loadOptions() {
+        if (citiesList && !citiesList.length || !citiesList) {
+            await fakeLoadOptions().then((data: any) => {
+                setCitiesList(data)
+                console.log({ data })
+                return data;
+            })
+        }
+    }
+
+    const INPUTS: IInputProps[] = [
+        {
+            name: "name",
+            label: "Name",
+            type: "string",
+            required: true,
+            placeholder: "Enter your name",
+            value: name,
+            error: Boolean(verifyForErrors("name")),
+            errors: errorName,
+            onChange: (e) => setName(e?.target?.value),
+            register: register("name", {
+                required: {
+                    value: true,
+                    message: "Campo obrigatório."
+                }, minLength: {
+                    value: 3,
+                    message: "Mínimo de 3 caracteres."
+                }, maxLength: {
+                    value: 30,
+                    message: "Máximo de 30 caracteres."
+                },
+                pattern: {
+                    value: /^[A-Za-z]+$/i,
+                    message: "Somente letras.",
+                },
+            }),
+        },
+        {
+            name: "age",
+            label: "Age",
+            type: "string",
+            required: true,
+            error: Boolean(verifyForErrors("age")),
+            errors: errorAge,
+            placeholder: "Enter your age",
+            value: age,
+            onChange: (e) => setAge(validateAge(e?.target?.value)),
+            register: register("age", {
+                required: {
+                    value: true,
+                    message: "Campo obrigatório."
+                },
+                min: {
+                    value: 1,
+                    message: "Valor deve ser maior que zero."
+                },
+            })
+        }
+    ]
+
+    const SELECTS: ISelectProps[] = [
+        {
+            name: "selectCity",
+            label: "Cidades",
+            required: true,
+            placeholder: "Selecione sua cidade",
+            onFocus: async () => await loadOptions(),
+            register: register("selectCities", {
+                required: {
+                    value: true,
+                    message: "Campo obrigatório."
+                },
+            }),
+            filterOption: (option: any, rawInput: any) => {
+                return citiesList.filter((item: any) => item?.label?.toLowerCase().includes(rawInput?.toLowerCase()))
+                // return option.label.toLowerCase().includes(rawInput.toLowerCase())
+            },
+            errors: errors?.select,
+            value: selectedCity,
+            onChange: (e: ChangeEvent<any>) => setSelectedCity(e?.target?.value),
+            noOptionsMessage: () => <CircularProgress color="secondary" />,
+            isClearable: true,
+            isSearchable: true,
+            defaultOptions: citiesList,
+            styles: {
+                container: (provided: any) => ({
+                    ...provided,
+                    height: "100%",
+                }),
+                content: (provided: any) => ({
+                    ...provided,
+                    height: "100%",
+                }),
+                control: (provided: any) => ({
+                    ...provided,
+                    height: "100%",
+                }),
+                option: (provided: object, state: any) => ({
+                    ...provided,
+                    borderBottom: '1px dotted pink',
+                    color: state.isSelected ? '#6a5acd' : '#222',
+                    padding: 20,
+                }),
+            },
+            onInputChange: (e: any) => {
+                console.log({ e })
+                if (e?.target?.value) {
+                    setSelectedCity(e?.target?.value)
+                }
+            }
+
+        }
+    ]
 
     return (
-        <form className="form">
-            <div className="container">
-                <section>
-                    <label>React Select</label>
-                    <Controller
-                        name="ReactSelect"
-                        control={control}
-                        render={({ field }) => (
-                            <ReactSelect
-                                isClearable
-                                {...field}
-                                options={[
-                                    { value: "chocolate", label: "Chocolate" },
-                                    { value: "strawberry", label: "Strawberry" },
-                                    { value: "vanilla", label: "Vanilla" }
-                                ]}
-                            />
-                        )}
-                    />
-                </section>
-                <section>
-                    <label>React Datepicker</label>
-                    <Controller
-                        control={control}
-                        name="ReactDatepicker"
-                        render={({ field }) => (
-                            <ReactDatePicker
-                                className="input"
-                                placeholderText="Select date"
-                                onChange={(e) => field.onChange(e)}
-                                selected={field.value}
-                            />
-                        )}
-                    />
-                </section>
-                <section>
-                    <label>React Datepicker</label>
-                    <Controller
-                        control={control}
-                        name="ReactDatepicker"
-                        render={({ field }) => (
-                            <ReactDatePicker
-                                className="input"
-                                placeholderText="Select date"
-                                onChange={(e) => field.onChange(e)}
-                                selected={field.value}
-                            />
-                        )}
-                    />
-                </section>
-                <section>
-                    <label>React Datepicker</label>
-                    <Controller
-                        control={control}
-                        name="ReactDatepicker"
-                        render={({ field }) => (
-                            <ReactDatePicker
-                                className="input"
-                                placeholderText="Select date"
-                                onChange={(e) => field.onChange(e)}
-                                selected={field.value}
-                            />
-                        )}
-                    />
-                </section>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="form">
+            <div className="body">
+                {INPUTS.map((input) => EnumRenderFormInputs.TEXT(input))}
+                {SELECTS.map((select) => EnumRenderFormInputs.SELECT(select))}
             </div>
-            <button
-                className="button buttonBlack"
-                type="button"
-                role="submit"
-                onClick={handleSubmit((data: any) => setData(data))}
-            >TESTE</button>
+            <div className="footer">
+                <Button
+                    variant="contained"
+                    type="submit"
+                    onClick={onSubmit}
+                    className="button"
+                >Salvar</Button>
+            </div>
         </form>
     );
 }

@@ -50,7 +50,7 @@ export default function AppBar() {
 	return (
 		<Box sx={{ flexGrow: 1 }}>
 			<MaterialAppBar position="static">
-				<Toolbar>
+				<Toolbar style={{ backgroundColor: "slateblue" }}>
 					<IconButton
 						size="large"
 						edge="start"

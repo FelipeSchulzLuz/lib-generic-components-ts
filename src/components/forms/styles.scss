@@ -1,0 +1,36 @@
+.form {
+    max-width: 800px;
+    margin: 70px auto 0 auto;
+    min-height: 400px;
+
+
+    .button {
+        background-color: #6a5acd;
+        width: 100%;
+
+        &:hover {
+            background-color: #53489b;
+        }
+    }
+
+    .body {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 20px;
+    }
+
+    .footer {
+        margin: 20px 0;
+    }
+
+    .error {
+        color: red;
+        font-size: 12px;
+        margin-top: 10px;
+        letter-spacing: 0.5px;
+    }
+
+    .form__select {
+        height: 56px;
+    }
+}
