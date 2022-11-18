@@ -1,25 +1,25 @@
 import { Button, CircularProgress } from "@mui/material";
 import { ChangeEvent, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, UseFormRegisterReturn } from "react-hook-form";
+import { ISelectAsyncProps } from "../forms/types";
 import { EnumRenderFormInputs } from "./enumRender";
 import "./styles.scss";
 import { IInputProps, ISelectAsyncProps } from "./types";
-import { fakeLoadPrivacyBannerOptions } from './mock/services.mock'
 
 export default function Form() {
     const { handleSubmit, register, formState: { errors }, getValues, clearErrors } = useForm({ mode: "onSubmit" });
-    const { age: errorAge, name: errorName, } = errors
-    const [data, setData] = useState();
-    const [name, setName] = useState<string>("");
-    const [age, setAge] = useState<number>(0);
-    const [selectedCity, setSelectedCity] = useState<string>('');
-    const [citiesList, setCitiesList] = useState<any[]>([]);
+    const { order: errorOrder, name: errorName, } = errors
 
-    
-    function validateAge(age: any) {
+    const [name, setName] = useState("");
+    const [order, setOrder] = useState();
+    const [status, setStatus] = useState();
+    const [category, setCategory] = useState();
+
+
+    function validateOnlyNumber(age: any) {
         if (age > 0) return age
         if (Number(age) > 0) return Number(age)
-        return 0
+        return age
     }
 
     function verifyForErrors(name: string) {
@@ -33,16 +33,6 @@ export default function Form() {
         // setData(formValues)
     }
 
-    async function loadOptions() {
-        if (citiesList && !citiesList.length || !citiesList) {
-            await fakeLoadPrivacyBannerOptions
-            ().then((data: any) => {
-                setCitiesList(data)
-                console.log({ data })
-                return data;
-            })
-        }
-    }
 
     const INPUTS: IInputProps[] = [
         {
@@ -52,9 +42,9 @@ export default function Form() {
             required: true,
             placeholder: "Enter your name",
             value: name,
-            error: Boolean(verifyForErrors("name")),
             errors: errorName,
-            onChange: (e) => setName(e?.target?.value),
+            error: Boolean(verifyForErrors("name")),
+            onChange: (e: ChangeEvent<any>) => setName(e?.target?.value),
             register: register("name", {
                 required: {
                     value: true,
@@ -73,16 +63,16 @@ export default function Form() {
             }),
         },
         {
-            name: "ordenacao",
+            name: "Ordenação",
             label: "Ordenação",
             type: "string",
             required: true,
-            error: Boolean(verifyForErrors("age")),
-            errors: errorAge,
-            placeholder: "Enter your age",
-            value: age,
-            onChange: (e) => setAge(validateAge(e?.target?.value)),
-            register: register("age", {
+            placeholder: "Posição a ser apresentado. Ex.: 1 | 2 | ...",
+            value: order,
+            errors: errorOrder,
+            error: Boolean(verifyForErrors("order")),
+            onChange: (e: ChangeEvent<any>) => setOrder(validateOnlyNumber(e?.target?.value)),
+            register: register("order", {
                 required: {
                     value: true,
                     message: "Campo obrigatório."
@@ -97,14 +87,11 @@ export default function Form() {
 
     const SELECTS: ISelectAsyncProps[] = [
         {
-            onMenuOpen: () => loadOptions(),
-            onMenuClose: () => console.log(''),
-            getOptionLabel: (option: any) => option.label,
-            getOptionValue: (option: any) => option.value,
-            name: "status",
-            label: "Status",
+            defaultInputValue: category,
+            name: "category",
+            label: "Categoria",
             required: true,
-            placeholder: "Selecione sua cidade",
+            placeholder: "Selecione sua categoria.",
             onFocus: async () => {
                 if (!citiesList || citiesList && !citiesList.length) await loadOptions()
             },
@@ -114,8 +101,15 @@ export default function Form() {
                     message: "Campo obrigatório."
                 },
             }),
+            // filterOption: (_option: any, rawInput: any) => {
+            //     // return Boolean(citiesList.filter((item: any) => item?.label?.toLowerCase().includes(rawInput?.toLowerCase())))
+            //     // return option.label.toLowerCase().includes(rawInput.toLowerCase())
+            // },
             errors: errors?.select,
-            onChange: (e: ChangeEvent<any>) => setSelectedCity(e?.target?.value?.label),
+            onChange: (e: ChangeEvent<any>) => {
+                console.log({ e })
+                return e?.target?.value
+            },
             noOptionsMessage: () => <CircularProgress color="secondary" />,
             isClearable: true,
             isSearchable: true,
@@ -136,12 +130,9 @@ export default function Form() {
                     padding: 20,
                 }),
             },
-            onInputChange: (e: any) => {
-                // console.log({ e })
-                // if (e?.target?.value) {
-                //     setSelectedCity(e?.target?.value)
-                // }
-            }
+            // onInputChange: (e: ChangeEvent) => {
+            //     if (e?.target?.value) setCategory(e?.target?.value)
+            // }
         }
     ]
 
