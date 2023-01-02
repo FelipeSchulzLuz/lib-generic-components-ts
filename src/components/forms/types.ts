@@ -1,9 +1,7 @@
 import { BaseTextFieldProps } from "@mui/material";
+import { FocusEventHandler, JSXElementConstructor, ReactElement } from "react";
 import { FieldError, Merge, UseFormRegisterReturn } from "react-hook-form";
-import AsyncSelect, { OnChangeValue, StylesConfig, StateManagedSelect } from "react-select";
-import { AsyncProps } from "react-select/async";
-import Select,  { Props } from "react-select/dist/declarations/src/Select";
-import { StylesConfigFunction, StylesProps } from "react-select/dist/declarations/src/styles";
+import StateManagedSelect, { StylesConfig } from "react-select";
 
 interface IDateProps {
     onChange: React.Dispatch<React.SetStateAction<any>>;
@@ -17,22 +15,24 @@ interface IInputProps extends BaseTextFieldProps {
     errors: FieldError | Merge<any, any> | undefined;
 }
 
-interface ISelectAsyncProps extends AsyncSelect {
+interface ISelectAsyncProps {
     onChange: React.Dispatch<React.SetStateAction<any>>;
     register: UseFormRegisterReturn<any>;
     errors: FieldError | Merge<any, any> | undefined;
+    error: boolean;
     defaultInputValue: string | undefined;
     name: string | undefined;
     label: string | undefined;
     required: Boolean;
     placeholder: string;
-    onFocus: Function;
+    onFocus: FocusEventHandler<HTMLInputElement>;
     noOptionsMessage: () => JSX.Element;
     isClearable: boolean;
     isSearchable: boolean;
-    defaultOptions: Array<any>;
+    defaultOptions: any[] | undefined;
     styles: StylesConfig;
-    onInputChange: StateManagedSelect
+    // onInputChange: ReactElement<any, any | JSXElementConstructor<any>>;
+    
 }
 
 export type { IDateProps, IInputProps, ISelectAsyncProps };

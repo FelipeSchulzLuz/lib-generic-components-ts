@@ -27,10 +27,10 @@ export const fakeLoadCategoryOptions = () => {
         console.log("fakeLoadOptions");
         setTimeout(() => {
             resolve([
-                { value: "1", label: "BANNER_FIXO" },
-                { value: "2", label: "ITEMS_MARCA" },
-                { value: "3", label: "BANNER_DISPLAY" },
-                { value: "4", label: "BANNER_CAROUSEL" },
+                { label: 'Fixo', key: "1", value: "BANNER_FIXO" },
+                { label: 'Items da Marca', key: "2", value: "ITEMS_MARCA" },
+                { label: 'Carousel Card', key: "3", value: "BANNER_CAROUSEL_CARD" },
+                { label: 'Carousel Tela Inteira', key: "4", value: "BANNER_CAROUSEL_FULL_WIDTH" },
             ])
         }, 1000)
     })

@@ -6,6 +6,7 @@ import AsyncSelect from "react-select/async";
 import { FieldError, Merge } from "react-hook-form";
 import { height } from "@mui/system";
 import { FormLabel } from "@mui/material";
+import React, { Fragment } from "react";
 
 function createSection(key: string | undefined, errors: FieldError | Merge<any, any> | undefined | undefined, children: JSX.Element[]) {
     return (
@@ -19,21 +20,21 @@ function createSection(key: string | undefined, errors: FieldError | Merge<any, 
 
 export const EnumRenderFormInputs = {
     ASYNC_SELECT: (props: ISelectAsyncProps) => createSection(props?.name, props?.errors, [
-        <>
+        <Fragment key={props?.name}>
             <FormLabel style={{ margin: '0 0 10px 0' }}>{props?.label}</FormLabel>
-            <AsyncSelect cacheOptions {...props} className="form__select" />
-        </>
+            <AsyncSelect cacheOptions {...props} className={props?.error ? 'form__select__error' : "form__select"} />
+        </Fragment>
     ]),
     DATE: ({ ...props }) => createSection(props?.name, props?.errors, [
-        <>
+        <Fragment key={props?.name}>
             <FormLabel>{props?.label}</FormLabel>
             <ReactDatePicker {...props} onChange={(date) => props.onChange(date)} />
-        </>
+        </Fragment>
     ]),
     TEXT: (props: IInputProps) => createSection(props?.name, props?.errors, [
-        <>
+        <Fragment key={props?.name}>
             <FormLabel>{props?.label}</FormLabel>
             <TextField fullWidth {...props?.register} {...props} type='string' label={null} />
-        </>
+        </Fragment>
     ]),
 }
