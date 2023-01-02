@@ -14,6 +14,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useRecoilState } from 'recoil';
 import { atom } from 'recoil';
+import { StyledBox } from './styles';
 
 const titleHeader = atom({
 	key: 'titleHeaderState',
@@ -48,7 +49,7 @@ export default function AppBar() {
 	}
 
 	return (
-		<Box sx={{ flexGrow: 1 }}>
+		<StyledBox sx={{ flexGrow: 1 }}>
 			<MaterialAppBar position="static">
 				<Toolbar style={{ backgroundColor: "slateblue" }}>
 					<IconButton
@@ -67,6 +68,6 @@ export default function AppBar() {
 					<Button color="inherit">Login</Button>
 				</Toolbar>
 			</MaterialAppBar>
-		</Box>
+		</StyledBox>
 	);
 }

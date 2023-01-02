@@ -8,16 +8,34 @@ const Wrapper = styled.div`
     margin: 0;
     padding: 0;
     min-height: 100vh;
+
+    grid-template-areas:
+    "header header header"
+    "sideContent content content"
+    "footer footer footer";
+    
+    grid-template-rows: 60px 1fr 60px;
+    grid-template-columns: auto;
   `;
+
+const StyledContainer = styled.div`
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 1fr;
+
+    padding: 0 80px;
+`;
 
 function App() {
   return (
-    <Wrapper>
-      <RecoilRoot>
+    <RecoilRoot>
+      <Wrapper>
         <AppBar />
+        <StyledContainer>
         <Form />
-      </RecoilRoot>
-    </Wrapper>
+        </StyledContainer>
+      </Wrapper>
+    </RecoilRoot>
   )
 }
 
